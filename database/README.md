@@ -1,0 +1,1 @@
+#database folder contains all database related files
