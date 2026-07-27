@@ -141,3 +141,25 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Python (for prediction-worker, if Python-based)
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+!.vscode/extensions.json
+
+# Docker
+docker-compose.override.yml
+
+# Database
+*.sqlite3
+/database/data/
