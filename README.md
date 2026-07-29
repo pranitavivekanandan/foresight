@@ -47,3 +47,40 @@ ASSUMPTIONS & CONSTRAINTS
 6. Scope is limited to what's defined in the MoSCoW breakdown
 7. Out of scope for now: real cloud billing integration, ML-based prediction, cross-service causal chains, mobile push notifications
 8. Future work: using an LLM to phrase explanations more naturally, while keeping the underlying reasoning based on our own computed data rather than the LLM inferring the cause itself
+
+## Branching Strategy
+This project follows **GitHub Flow**:
+- `main` is always deployable and stable
+- All new work happens on a feature branch, named `feature/<short-description>`
+- Once work on a branch is complete, open a Pull Request into `main`
+- After review, merge the PR and delete the feature branch
+
+Example branches used in this project: `feature/dashboard-ui`, `feature/docker-setup`, `feature/prediction-worker`
+
+## Quick Start – Local Development
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) and make sure it's running
+2. Clone this repository:
+   \`\`\`bash
+   git clone https://github.com/pranitavivekanandan/foresight.git
+   cd foresight
+   \`\`\`
+3. Build and run all services:
+   \`\`\`bash
+   docker-compose up --build
+   \`\`\`
+4. Once running, open your browser to:
+   - Frontend: http://localhost:3000
+   - Backend health check: http://localhost:5000/health
+5. To stop the containers, press `Ctrl+C` in the terminal, then run:
+   \`\`\`bash
+   docker-compose down
+   \`\`\`
+
+## Local Development Tools
+
+- [Visual Studio Code](https://code.visualstudio.com/) — code editor
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — container runtime for local development
+- [Node.js](https://nodejs.org/) (v20) — JavaScript runtime for frontend and backend
+- [Git](https://git-scm.com/) — version control
+- [GitHub](https://github.com/) — repository hosting, Issues, and Projects for task tracking
