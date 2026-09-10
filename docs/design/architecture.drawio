@@ -1,0 +1,92 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Foresight Architecture" id="foresight-arch">
+    <mxGraphModel dx="1290" dy="695" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="docker" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Docker Engine (host)&#xa;running containers" vertex="1">
+          <mxGeometry height="60" width="220" x="360" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="backendGroup" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;dashed=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;" value="Backend (Node/Express)" vertex="1">
+          <mxGeometry height="220" width="500" x="140" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="poller" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="Poller&#xa;(10s tick)" vertex="1">
+          <mxGeometry height="50" width="150" x="170" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="statsSvc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="dockerStatsService&#xa;(collects + computes CPU%/mem%)" vertex="1">
+          <mxGeometry height="50" width="230" x="370" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="metricsSvc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="metricsService&#xa;(insert + history read)" vertex="1">
+          <mxGeometry height="50" width="230" x="370" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="controller" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="statsController / routes&#xa;(HTTP API)" vertex="1">
+          <mxGeometry height="50" width="150" x="170" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="TimescaleDB&#xa;container_stats (hypertable)" vertex="1">
+          <mxGeometry height="60" width="200" x="850" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="frontendGroup" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#666666;dashed=1;verticalAlign=top;align=left;spacingLeft=8;spacingTop=6;" value="Frontend (Browser)" vertex="1">
+          <mxGeometry height="140" width="500" x="140" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="dashboardUI" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Dashboard UI&#xa;(live cards)" vertex="1">
+          <mxGeometry height="60" width="200" x="170" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="predictJs" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Prediction module&#xa;(predict.js — linear regression&#xa;breach forecaster)" vertex="1">
+          <mxGeometry height="60" width="200" x="420" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="docker" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="statsSvc" value="Docker Engine API">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="poller" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="statsSvc" value="triggers collection">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="statsSvc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="metricsSvc" value="collected stats">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="metricsSvc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="db" value="INSERT container_stats">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="670" y="310" />
+              <mxPoint x="670" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="db" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="metricsSvc" value="SELECT history">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="660" y="330" />
+              <mxPoint x="660" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="controller" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="metricsSvc" value="getHistory()">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="dashboardUI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="controller" value="GET /api/stats/:id/history">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="460" />
+              <mxPoint x="300" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="dashboardUI" value="JSON response">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180.04" y="430.04" />
+              <mxPoint x="270.04" y="430.04" />
+            </Array>
+            <mxPoint x="179.99703703703696" y="340" as="sourcePoint" />
+            <mxPoint x="249.99703703703696" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="dashboardUI" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="predictJs" value="data[]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="predictJs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="dashboardUI" value="forecast">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
