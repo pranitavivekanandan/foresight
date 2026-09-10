@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   frontend:
     build: ./frontend
@@ -8,3 +7,29 @@ services:
     build: ./backend
     ports:
       - "5000:5000"
+    depends_on:
+      - timescaledb
+    environment:
+      PGHOST: timescaledb
+      PGPORT: 5432
+      PGUSER: foresight
+      PGPASSWORD: foresight
+      PGDATABASE: foresight
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: foresight-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: foresight
+      POSTGRES_PASSWORD: foresight
+      POSTGRES_DB: foresight
+    ports:
+      - "5432:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  timescale_data:
