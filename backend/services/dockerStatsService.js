@@ -30,6 +30,14 @@ function calculateMemory(stats) {
   return { memUsedMB, memLimitMB, memPercent };
 }
 
+async function listContainers() {
+  const containers = await docker.listContainers();
+  return containers.map((containerInfo) => ({
+    containerId: containerInfo.Id,
+    containerName: containerInfo.Names[0].replace(/^\//, ''),
+  }));
+}
+
 async function collectAllContainerStats() {
   const containers = await docker.listContainers();
 
@@ -54,4 +62,4 @@ async function collectAllContainerStats() {
   return results;
 }
 
-module.exports = { collectAllContainerStats, calculateCpuPercent, calculateMemory };
+module.exports = { listContainers, collectAllContainerStats, calculateCpuPercent, calculateMemory };
