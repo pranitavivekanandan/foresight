@@ -1,5 +1,15 @@
-const { collectAllContainerStats } = require('../services/dockerStatsService');
+const { listContainers, collectAllContainerStats } = require('../services/dockerStatsService');
 const metricsService = require('../services/metricsService');
+
+async function getContainers(req, res) {
+  try {
+    const containers = await listContainers();
+    res.json(containers);
+  } catch (err) {
+    console.error('Failed to list containers:', err);
+    res.status(500).json({ error: 'Failed to list containers' });
+  }
+}
 
 async function getHistory(req, res) {
   try {
@@ -25,4 +35,4 @@ async function triggerCollection(req, res) {
   }
 }
 
-module.exports = { getHistory, triggerCollection };
+module.exports = { getContainers, getHistory, triggerCollection };

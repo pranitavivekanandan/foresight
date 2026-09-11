@@ -3,6 +3,7 @@ const statsController = require('../controllers/statsController');
 
 const router = express.Router();
 
+router.get('/containers', statsController.getContainers);
 router.get('/:containerId/history', statsController.getHistory);
 router.post('/collect', statsController.triggerCollection);
 
