@@ -92,4 +92,6 @@ Example branches used in this project: `feature/dashboard-ui`, `feature/docker-s
 
 *(Editable source: [docs/design/architecture.drawio](docs/design/architecture.drawio))*
 
+Figma prototype: https://www.figma.com/design/sod30DWYk1LUdfJjrW67BM/Foresight
+
 Foresight is built as a layered pipeline: a backend service collects real CPU/memory stats from the Docker Engine API on a fixed interval and stores them in a TimescaleDB hypertable, a thin Express API serves that history through a fixed JSON contract, and the frontend renders live per-container cards while a separate client-side module (`predict.js`) runs linear regression over the fetched history to forecast threshold breaches. Keeping prediction logic entirely on the frontend keeps the backend simple and stateless — it can evolve independently of how trends are visualized or forecast, and each layer (collection, storage, API, UI, prediction) can be changed without touching the others.
