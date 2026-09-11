@@ -84,3 +84,12 @@ Example branches used in this project: `feature/dashboard-ui`, `feature/docker-s
 - [Node.js](https://nodejs.org/) (v20) — JavaScript runtime for frontend and backend
 - [Git](https://git-scm.com/) — version control
 - [GitHub](https://github.com/) — repository hosting, Issues, and Projects for task tracking
+
+
+## Software Design
+
+![Architecture Diagram](docs/design/architecture.png)
+
+*(Editable source: [docs/design/architecture.drawio](docs/design/architecture.drawio))*
+
+Foresight is built as a layered pipeline: a backend service collects real CPU/memory stats from the Docker Engine API on a fixed interval and stores them in a TimescaleDB hypertable, a thin Express API serves that history through a fixed JSON contract, and the frontend renders live per-container cards while a separate client-side module (`predict.js`) runs linear regression over the fetched history to forecast threshold breaches. Keeping prediction logic entirely on the frontend keeps the backend simple and stateless — it can evolve independently of how trends are visualized or forecast, and each layer (collection, storage, API, UI, prediction) can be changed without touching the others.
