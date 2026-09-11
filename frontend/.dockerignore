@@ -1,0 +1,9 @@
+node_modules
+dist
+
+# Keep .env files off the image. VITE_* values for the Docker build are passed
+# as build args in docker-compose.yml, not from .env files. If .env were copied
+# in it would silently override the build args and break the Docker mode.
+.env
+.env.local
+.env.*.local

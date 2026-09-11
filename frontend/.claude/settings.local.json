@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /c/Users/konda/Documents/foresight/frontend/.env*)",
+      "Read(//c/Users/konda/Documents/foresight//**)",
+      "Bash(curl -s http://localhost:5000/health)",
+      "Bash(docker compose:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}

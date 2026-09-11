@@ -6,6 +6,8 @@ const app = express();
 const PORT = 5000;
 const POLL_INTERVAL_MS = Number(process.env.POLL_INTERVAL_MS) || 10000;
 
+const cors = require('cors');
+app.use(cors());
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });

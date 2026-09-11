@@ -1,6 +1,16 @@
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # The browser runs on the host and hits the backend's exposed port directly.
+        # Use localhost:5000 here — NOT the internal service name 'backend' — because
+        # 'backend' only resolves inside the Docker network, not from the user's browser.
+          VITE_API_BASE_URL: "http://localhost:5000"
+        # Comma-separated container IDs to show on the dashboard.
+        # Must match container_id values stored in the database.
+        # Example: VITE_CONTAINER_IDS: "my-api,my-worker"
+          VITE_CONTAINER_IDS: "f2f804bbb1e0db24e31b9e0fc2a3b81c618eb58d99177fae220a632bf465e5f3"
     ports:
       - "3000:3000"
   backend:
