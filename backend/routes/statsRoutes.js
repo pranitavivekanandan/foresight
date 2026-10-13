@@ -1,10 +1,16 @@
 const express = require('express');
 const statsController = require('../controllers/statsController');
 
-const router = express.Router();
+const statsRouter = express.Router();
 
-router.get('/containers', statsController.getContainers);
-router.get('/:containerId/history', statsController.getHistory);
-router.post('/collect', statsController.triggerCollection);
+statsRouter.get('/containers', statsController.getContainers);
+statsRouter.get('/:containerId/history', statsController.getHistory);
+statsRouter.post('/collect', statsController.triggerCollection);
 
-module.exports = router;
+const alertsRouter = express.Router();
+
+alertsRouter.get('/', statsController.getAlerts);
+alertsRouter.get('/:id', statsController.getAlertById);
+alertsRouter.patch('/:id/resolve', statsController.resolveAlert);
+
+module.exports = { statsRouter, alertsRouter };
