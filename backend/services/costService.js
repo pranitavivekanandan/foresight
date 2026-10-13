@@ -1,4 +1,8 @@
+const fs = require('fs');
+const path = require('path');
+
 const PRICING_URL = 'https://instances.vantage.sh/instances.json';
+const SEED_FILE = path.join(__dirname, '..', 'data', 'ec2-pricing-seed.json');
 
 const DEFAULT_REGION = process.env.COST_REGION || 'us-east-1';
 const RESTART_TIER = process.env.COST_RESTART_TIER || 't3.medium';
@@ -7,7 +11,7 @@ const UPGRADE_TO_TIER = process.env.COST_UPGRADE_TO_TIER || 't3.large';
 const WINDOW_HOURS = Number(process.env.COST_UPGRADE_WINDOW_HOURS) || 730;
 const REFRESH_INTERVAL_MS = Number(process.env.COST_REFRESH_INTERVAL_MS) || 24 * 60 * 60 * 1000;
 
-// The pricing payload is large (90MB+) and this host intermittently drops the
+// The full pricing payload is 90MB+ and this host intermittently drops the
 // connection mid-transfer, so a single fetch attempt is not reliable. Retry
 // with backoff rather than giving up after one failure.
 const FETCH_TIMEOUT_MS = Number(process.env.COST_FETCH_TIMEOUT_MS) || 120000;
@@ -15,7 +19,10 @@ const MAX_RETRIES = Number(process.env.COST_FETCH_MAX_RETRIES) || 5;
 const RETRY_BASE_DELAY_MS = Number(process.env.COST_FETCH_RETRY_BASE_DELAY_MS) || 30000;
 const MAX_RETRY_DELAY_MS = 5 * 60 * 1000;
 
-let pricingCache = { data: null, fetchedAt: null };
+// In-memory cache holds only the three resolved hourly prices we actually
+// use, never the full 90MB dataset -- extracted once right after a
+// successful fetch, then discarded.
+let pricingCache = { prices: null, source: null, fetchedAt: null };
 
 function extractHourlyPrice(instancesData, instanceType, region = DEFAULT_REGION, os = 'linux') {
   const entry = instancesData.find((item) => item.instance_type === instanceType);
@@ -49,6 +56,44 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function resolvePrices(instancesData) {
+  return {
+    restartHourlyPrice: extractHourlyPrice(instancesData, RESTART_TIER),
+    fromHourlyPrice: extractHourlyPrice(instancesData, UPGRADE_FROM_TIER),
+    toHourlyPrice: extractHourlyPrice(instancesData, UPGRADE_TO_TIER),
+  };
+}
+
+/**
+ * Loads whatever was cached to disk from the last successful live fetch (if
+ * any) so getCosts() has real numbers immediately on startup, without
+ * waiting on -- or being blocked by -- the live fetch below. This is a
+ * seeded fallback, not fabricated data: it was itself written by a real
+ * fetch from PRICING_URL at some point, just not necessarily this run.
+ */
+function loadSeedFromDisk() {
+  try {
+    const raw = fs.readFileSync(SEED_FILE, 'utf8');
+    const seed = JSON.parse(raw);
+    pricingCache = { prices: seed.prices, source: 'disk-seed', fetchedAt: seed.fetchedAt };
+    console.log(`costService: loaded fallback pricing from disk seed (captured ${seed.fetchedAt})`);
+  } catch (err) {
+    console.log('costService: no usable disk seed found, cost estimates unavailable until a live fetch succeeds');
+  }
+}
+
+function saveSeedToDisk(prices) {
+  try {
+    fs.mkdirSync(path.dirname(SEED_FILE), { recursive: true });
+    fs.writeFileSync(
+      SEED_FILE,
+      JSON.stringify({ region: DEFAULT_REGION, prices, fetchedAt: new Date().toISOString() }, null, 2)
+    );
+  } catch (err) {
+    console.error('costService: failed to persist pricing seed to disk:', err.message);
+  }
+}
+
 async function fetchPricingOnce() {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -64,9 +109,11 @@ async function fetchPricingOnce() {
 async function loadPricing() {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const data = await fetchPricingOnce();
-      pricingCache = { data, fetchedAt: new Date() };
-      console.log(`costService: cached pricing for ${data.length} instance types (attempt ${attempt}/${MAX_RETRIES})`);
+      const instancesData = await fetchPricingOnce();
+      const prices = resolvePrices(instancesData);
+      pricingCache = { prices, source: 'live', fetchedAt: new Date().toISOString() };
+      saveSeedToDisk(prices);
+      console.log(`costService: live pricing fetch succeeded (attempt ${attempt}/${MAX_RETRIES}), cached and seeded to disk`);
       return;
     } catch (err) {
       console.error(`costService: pricing fetch attempt ${attempt}/${MAX_RETRIES} failed: ${err.message}`);
@@ -76,24 +123,31 @@ async function loadPricing() {
       }
     }
   }
-  console.error('costService: exhausted all pricing fetch retries, cost estimates remain unavailable until the next scheduled refresh');
+  console.error(
+    pricingCache.prices
+      ? 'costService: exhausted all live fetch retries, continuing with cached/seeded pricing'
+      : 'costService: exhausted all live fetch retries and no seed is available, cost estimates remain unavailable'
+  );
 }
 
 function getCosts() {
-  if (!pricingCache.data) {
+  if (!pricingCache.prices) {
     return { costRestartUsd: null, costUpgradeUsd: null };
   }
-
-  const restartHourlyPrice = extractHourlyPrice(pricingCache.data, RESTART_TIER);
-  const fromHourlyPrice = extractHourlyPrice(pricingCache.data, UPGRADE_FROM_TIER);
-  const toHourlyPrice = extractHourlyPrice(pricingCache.data, UPGRADE_TO_TIER);
-
-  return computeCostDelta({ restartHourlyPrice, fromHourlyPrice, toHourlyPrice });
+  return computeCostDelta(pricingCache.prices);
 }
 
 function startPricingRefresh(intervalMs = REFRESH_INTERVAL_MS) {
+  loadSeedFromDisk();
   loadPricing();
   return setInterval(loadPricing, intervalMs);
 }
 
-module.exports = { computeCostDelta, extractHourlyPrice, getCosts, loadPricing, startPricingRefresh };
+module.exports = {
+  computeCostDelta,
+  extractHourlyPrice,
+  getCosts,
+  loadPricing,
+  loadSeedFromDisk,
+  startPricingRefresh,
+};
