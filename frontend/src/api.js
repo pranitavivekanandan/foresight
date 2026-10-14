@@ -48,3 +48,46 @@ export async function getContainerHistory(containerId, limit = 100) {
 
   return body
 }
+
+export async function getAlerts() {
+  let response
+
+  try {
+    response = await fetch(`${API_BASE_URL}/api/alerts`, {
+      signal: AbortSignal.timeout(5000),
+    })
+  } catch {
+    throw new BackendUnreachableError()
+  }
+
+  if (!response.ok) {
+    throw new Error(`Server returned HTTP ${response.status} for GET /api/alerts`)
+  }
+
+  const body = await response.json()
+
+  if (!Array.isArray(body)) {
+    throw new Error('Unexpected response format for alerts')
+  }
+
+  return body
+}
+
+export async function resolveAlert(id) {
+  let response
+
+  try {
+    response = await fetch(`${API_BASE_URL}/api/alerts/${encodeURIComponent(id)}/resolve`, {
+      method: 'PATCH',
+      signal: AbortSignal.timeout(5000),
+    })
+  } catch {
+    throw new BackendUnreachableError()
+  }
+
+  if (!response.ok) {
+    throw new Error(`Server returned HTTP ${response.status} for PATCH /api/alerts/${id}/resolve`)
+  }
+
+  return response.json()
+}
