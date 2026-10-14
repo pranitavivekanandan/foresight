@@ -192,3 +192,10 @@ export function highlightPercents(text, { current } = {}) {
   if (lastIndex < (text || '').length) segments.push({ text: text.slice(lastIndex), tone: null })
   return segments
 }
+
+// Hero heading on the alert detail screen.
+export function anomalyHeading(metric) {
+  if (metric === 'cpuPercent') return 'Anomalous CPU Usage'
+  if (metric === 'memPercent') return 'Anomalous Memory Consumption'
+  return `Anomalous ${metricLabel(metric)}`
+}

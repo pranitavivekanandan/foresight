@@ -36,3 +36,8 @@ export const STALE_AFTER_MINUTES = 5
 // Until that is confirmed these stay null and the UI shows "unit unconfirmed".
 export const COST_RESTART_UNIT = null
 export const COST_UPGRADE_UNIT = null
+
+// Mirrors the backend's ALERT_HISTORY_POINTS default: the alert evaluator fits
+// its regression over this many latest readings, so the alert detail screen
+// reports its fit over the same window.
+export const ALERT_HISTORY_POINTS = 20

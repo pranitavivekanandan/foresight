@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, within, fireEvent, waitFor } from '@testing-library/react'
 import App from './App'
 
 import { fakeBackend } from './test/fakeBackend'
@@ -41,5 +41,32 @@ describe('App routes', () => {
     // demo-worker's alert is grouped under demo-api's alert
     expect(await screen.findByText('demo-worker')).toBeInTheDocument()
     expect(screen.getByText(/projected to cross 90% in about 4 minutes/)).toBeInTheDocument()
+  })
+
+  it('renders alert detail with simulated, local and real actions', async () => {
+    renderAt('#/alerts/1')
+    expect(await screen.findByRole('heading', { name: 'Memory predicted to breach 90%' })).toBeInTheDocument()
+    expect(screen.getByText('Critical')).toBeInTheDocument()
+    expect(screen.getByText('$0.0007')).toBeInTheDocument()
+    expect(screen.getByText('$30.37')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /Apply upgrade now/ }))
+    expect(await screen.findByText(/Simulated: not connected to infrastructure/)).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: /Acknowledge Alert/ }))
+    expect(JSON.parse(window.localStorage.getItem('foresight:acknowledged-alerts'))).toEqual([1])
+
+    fireEvent.change(screen.getByLabelText('Assigned to'), { target: { value: 'DevOps_OnCall' } })
+    expect(JSON.parse(window.localStorage.getItem('foresight:alert-assignees'))).toEqual({ 1: 'DevOps_OnCall' })
+
+    fireEvent.click(screen.getByRole('button', { name: /^Resolve$/ }))
+    await waitFor(() =>
+      expect(fetch).toHaveBeenCalledWith('/api/alerts/1/resolve', expect.objectContaining({ method: 'PATCH' })),
+    )
+  })
+
+  it('shows not found for an unknown alert id', async () => {
+    renderAt('#/alerts/999')
+    expect(await screen.findByText('Alert 999 not found')).toBeInTheDocument()
   })
 })

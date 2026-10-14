@@ -5,6 +5,7 @@ import { RulesProvider } from './context/RulesContext'
 import { DataProvider } from './context/DataContext'
 import DashboardPage from './pages/DashboardPage'
 import MetricDetailPage from './pages/MetricDetailPage'
+import AlertDetailPage from './pages/AlertDetailPage'
 import './App.css'
 
 // HashRouter so every screen has its own URL and a browser refresh works
@@ -16,6 +17,7 @@ export function AppRoutes() {
         <Route index element={<DashboardPage />} />
         <Route path="services/:containerId/:metric" element={<MetricDetailPage />} />
         <Route path="services/:containerId" element={<MetricDetailPage />} />
+        <Route path="alerts/:alertId" element={<AlertDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -17,6 +17,7 @@ import {
   sortAlertGroups,
   changeOverHistory,
   highlightPercents,
+  anomalyHeading,
 } from './alertsUtils'
 
 const base = {
@@ -148,5 +149,13 @@ describe('highlightPercents', () => {
       { text: ' soon', tone: null },
     ])
     expect(highlightPercents('')).toEqual([])
+  })
+})
+
+describe('anomalyHeading', () => {
+  it('names the anomaly by metric', () => {
+    expect(anomalyHeading('memPercent')).toBe('Anomalous Memory Consumption')
+    expect(anomalyHeading('cpuPercent')).toBe('Anomalous CPU Usage')
+    expect(anomalyHeading('diskPercent')).toBe('Anomalous diskPercent')
   })
 })
