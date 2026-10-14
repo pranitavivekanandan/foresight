@@ -1,5 +1,6 @@
 import TrendChart from './TrendChart'
 import { analyzeTrend } from '../trend'
+import { MEM_THRESHOLD_PERCENT } from '../constants'
 
 export default function DashboardCard({ containerName, history, prediction, cpuPrediction, hasActiveAlert }) {
   const data = Array.isArray(history?.data) ? history.data : []
@@ -43,7 +44,7 @@ export default function DashboardCard({ containerName, history, prediction, cpuP
           <div className="prediction-content">
             <div><span>Memory</span><strong className={`trend-${memoryTrend.direction}`}>{memoryTrend.direction === 'increasing' ? '↑' : memoryTrend.direction === 'decreasing' ? '↓' : '→'} {memoryTrend.direction}</strong></div>
             <div><span>CPU</span><strong className={`${cpuPrediction?.willBreach ? 'alert ' : ''}trend-${cpuTrend.direction}`}>{cpuTrend.direction === 'increasing' ? '↑' : cpuTrend.direction === 'decreasing' ? '↓' : '→'} {cpuTrend.direction}</strong></div>
-            <div><span>Current / threshold</span><strong>{Number.isFinite(lastEntry.memPercent) ? `${lastEntry.memPercent.toFixed(2)}% / 90%` : 'Unavailable'}</strong></div>
+            <div><span>Current / threshold</span><strong>{Number.isFinite(lastEntry.memPercent) ? `${lastEntry.memPercent.toFixed(2)}% / ${MEM_THRESHOLD_PERCENT}%` : 'Unavailable'}</strong></div>
             <div><span>Estimated breach</span><strong className={prediction?.willBreach ? 'alert' : ''}>{prediction?.willBreach ? (prediction.minutesToBreach === 0 ? 'Threshold reached' : `~${prediction.minutesToBreach} minutes`) : 'Not projected'}</strong></div>
           </div>
         ) : (

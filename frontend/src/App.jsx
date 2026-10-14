@@ -5,10 +5,8 @@ import Sidebar from './components/Sidebar'
 import AlertsFeed from './components/AlertsFeed'
 import AlertDetail from './components/AlertDetail'
 import { predictBreach } from './predict'
+import { MEM_THRESHOLD_PERCENT, CPU_THRESHOLD_PERCENT, POLL_INTERVAL_MS } from './constants'
 import './App.css'
-
-// How often to re-fetch all container histories (milliseconds).
-const POLL_INTERVAL_MS = 30_000
 
 // Read the comma-separated container IDs from the environment.
 // Set VITE_CONTAINER_IDS in your .env file to match whatever IDs are in the DB.
@@ -34,8 +32,8 @@ async function fetchAllContainers() {
         history,
         // Linear regression over the history to predict when memory / CPU will
         // breach the threshold. See predict.js for the math.
-        prediction: predictBreach(history.data),
-        cpuPrediction: predictBreach(history.data, 'cpuPercent', 80),
+        prediction: predictBreach(history.data, 'memPercent', MEM_THRESHOLD_PERCENT),
+        cpuPrediction: predictBreach(history.data, 'cpuPercent', CPU_THRESHOLD_PERCENT),
         error: null,
       }
     }
