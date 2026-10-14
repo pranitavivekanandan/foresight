@@ -151,3 +151,25 @@ export function systemStatus({ healthOk, reporting, total }) {
   if (reporting === total) return { tone: 'healthy', text: 'All system nodes operational' }
   return { tone: 'warning', text: `${reporting} of ${total} containers reporting` }
 }
+
+export const TIME_RANGES = [
+  { id: '1h', label: '1H', minutes: 60 },
+  { id: '6h', label: '6H', minutes: 360 },
+  { id: '24h', label: '24H', minutes: 1440 },
+  { id: '7d', label: '7D', minutes: 10080 },
+]
+
+// Keeps rows newer than `minutes` before `now`.
+export function filterHistoryByRange(rows, minutes, now = Date.now()) {
+  const cutoff = now - minutes * 60000
+  return (rows || []).filter((row) => new Date(row.timestamp).getTime() >= cutoff)
+}
+
+// What the filtered rows actually cover, so the UI can say so when the
+// backend's 1000-row cap means a long range is only partly filled.
+export function historyCoverage(rows) {
+  if (!rows || rows.length === 0) return { count: 0, spanMinutes: 0, from: null }
+  const first = new Date(rows[0].timestamp).getTime()
+  const last = new Date(rows[rows.length - 1].timestamp).getTime()
+  return { count: rows.length, spanMinutes: (last - first) / 60000, from: rows[0].timestamp }
+}

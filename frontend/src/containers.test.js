@@ -9,6 +9,8 @@ import {
   healthScore,
   systemStatus,
   containerTone,
+  filterHistoryByRange,
+  historyCoverage,
 } from './containers'
 
 const NOW = Date.parse('2026-01-01T01:00:00Z')
@@ -174,5 +176,20 @@ describe('containerTone', () => {
     expect(containerTone({ ...base, predictedBreachMinutes: 3 })).toBe('warning')
     expect(containerTone(base)).toBe('healthy')
     expect(containerTone({ ...base, reporting: false })).toBe('muted')
+  })
+})
+
+describe('filterHistoryByRange / historyCoverage', () => {
+  const rows = [row(120, 1), row(50, 2), row(10, 3), row(0, 4)]
+
+  it('keeps rows inside the range', () => {
+    expect(filterHistoryByRange(rows, 60, NOW).map((r) => r.memPercent)).toEqual([2, 3, 4])
+    expect(filterHistoryByRange(rows, 5, NOW)).toHaveLength(1)
+    expect(filterHistoryByRange(undefined, 5, NOW)).toEqual([])
+  })
+
+  it('reports how much time the rows cover', () => {
+    expect(historyCoverage(rows)).toEqual({ count: 4, spanMinutes: 120, from: rows[0].timestamp })
+    expect(historyCoverage([])).toEqual({ count: 0, spanMinutes: 0, from: null })
   })
 })

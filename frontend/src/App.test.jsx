@@ -31,4 +31,15 @@ describe('App routes', () => {
     expect(screen.getByTestId('bell-dot')).toBeInTheDocument()
     expect(screen.getByText(/Last refreshed:/)).toBeInTheDocument()
   })
+
+  it('renders the metric detail screen with fit, forecast and correlation', async () => {
+    renderAt('#/services/demo-api/memory')
+    expect(screen.getByRole('heading', { name: 'Memory Utilization' })).toBeInTheDocument()
+    expect(await screen.findByRole('img', { name: 'Memory history and forecast' })).toBeInTheDocument()
+    expect(screen.getByRole('progressbar', { name: 'Fit (R squared)' })).toHaveAttribute('aria-valuenow', '100')
+    expect(screen.getByText(/Request rate \/ error rate: n\/a \(not collected\)/)).toBeInTheDocument()
+    // demo-worker's alert is grouped under demo-api's alert
+    expect(await screen.findByText('demo-worker')).toBeInTheDocument()
+    expect(screen.getByText(/projected to cross 90% in about 4 minutes/)).toBeInTheDocument()
+  })
 })

@@ -4,6 +4,7 @@ import { ToastProvider } from './context/ToastContext'
 import { RulesProvider } from './context/RulesContext'
 import { DataProvider } from './context/DataContext'
 import DashboardPage from './pages/DashboardPage'
+import MetricDetailPage from './pages/MetricDetailPage'
 import './App.css'
 
 // HashRouter so every screen has its own URL and a browser refresh works
@@ -13,6 +14,8 @@ export function AppRoutes() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<DashboardPage />} />
+        <Route path="services/:containerId/:metric" element={<MetricDetailPage />} />
+        <Route path="services/:containerId" element={<MetricDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
