@@ -74,6 +74,10 @@ function App() {
 
   useEffect(() => {
     loadAlerts()
+    // Keep the alerts list (and the dashboard badges derived from it) fresh
+    // on the same cadence as the container history poll below.
+    const interval = setInterval(loadAlerts, POLL_INTERVAL_MS)
+    return () => clearInterval(interval)
   }, [])
 
   async function handleResolveFromDetail(id) {
