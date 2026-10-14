@@ -9,8 +9,8 @@ import {
 } from './constants'
 
 export const RULE_METRICS = {
-  memPercent: { label: 'Memory %', short: 'Memory', icon: 'ti-database' },
-  cpuPercent: { label: 'CPU %', short: 'CPU', icon: 'ti-cpu' },
+  memPercent: { label: 'Memory %', short: 'Memory', icon: 'database' },
+  cpuPercent: { label: 'CPU %', short: 'CPU', icon: 'cpu' },
 }
 
 export const OPERATORS = {
@@ -162,4 +162,28 @@ export function ruleSummary(draft, scopeName) {
   const value = draft.value === '' ? '—' : draft.value
   const duration = Number(draft.durationMin) > 0 ? ` sustained for ${draft.durationMin} min` : ''
   return `This rule checks ${metric} on ${scopeName} and fires when it is ${operator} ${value}%${duration}.`
+}
+
+// What predictive alerting would say right now for a draft rule: predict.js
+// run against each in-scope container's history with the draft's value.
+export function previewPredictions(draft, histories, containers = []) {
+  const value = Number(draft.value)
+  if (!Number.isFinite(value) || value <= 0 || draft.operator !== 'gt') return []
+  return Object.entries(histories || {})
+    .filter(([containerId, data]) => ruleAppliesTo(draft, containerId) && Array.isArray(data) && data.length > 0)
+    .map(([containerId, data]) => {
+      const p = predictBreach(data, draft.metric, value)
+      return {
+        containerId,
+        containerName: containers.find((c) => c.containerId === containerId)?.containerName ?? containerId,
+        hasEnoughData: p.hasEnoughData,
+        currentValue: p.currentValue ?? null,
+        willBreach: Boolean(p.hasEnoughData && p.willBreach && p.minutesToBreach <= PREDICTION_LOOKAHEAD_MINUTES),
+        minutesToBreach: p.minutesToBreach ?? null,
+      }
+    })
+}
+
+export function rulesToJson(rules) {
+  return JSON.stringify({ exportedAt: new Date().toISOString(), rules }, null, 2)
 }

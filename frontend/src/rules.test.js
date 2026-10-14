@@ -11,6 +11,8 @@ import {
   evaluateRuleStatus,
   datapointsPerHour,
   ruleSummary,
+  previewPredictions,
+  rulesToJson,
 } from './rules'
 
 const NOW = Date.parse('2026-01-01T01:00:00Z')
@@ -148,5 +150,36 @@ describe('datapointsPerHour / ruleSummary', () => {
     expect(ruleSummary({ metric: 'memPercent', operator: 'lt', value: '', durationMin: 0 }, 'api')).toBe(
       'This rule checks Memory on api and fires when it is less than —%.',
     )
+  })
+})
+
+describe('previewPredictions', () => {
+  const histories = {
+    a: [minsAgo(3, 60), minsAgo(2, 65), minsAgo(1, 70), minsAgo(0, 75)],
+    b: [minsAgo(1, 40), minsAgo(0, 40)],
+    c: [],
+  }
+  const containers = [{ containerId: 'a', containerName: 'api' }]
+
+  it('runs predict.js per in-scope container with the draft value', () => {
+    const draft = { metric: 'memPercent', scope: 'all', operator: 'gt', value: '85' }
+    expect(previewPredictions(draft, histories, containers)).toEqual([
+      { containerId: 'a', containerName: 'api', hasEnoughData: true, currentValue: 75, willBreach: true, minutesToBreach: 2 },
+      { containerId: 'b', containerName: 'b', hasEnoughData: true, currentValue: 40, willBreach: false, minutesToBreach: null },
+    ])
+  })
+
+  it('respects scope and ignores invalid or less-than drafts', () => {
+    expect(previewPredictions({ metric: 'memPercent', scope: 'b', operator: 'gt', value: 85 }, histories)).toHaveLength(1)
+    expect(previewPredictions({ metric: 'memPercent', scope: 'all', operator: 'gt', value: '' }, histories)).toEqual([])
+    expect(previewPredictions({ metric: 'memPercent', scope: 'all', operator: 'lt', value: 10 }, histories)).toEqual([])
+  })
+})
+
+describe('rulesToJson', () => {
+  it('wraps the rules with an export timestamp', () => {
+    const parsed = JSON.parse(rulesToJson([{ id: 'r' }]))
+    expect(parsed.rules).toEqual([{ id: 'r' }])
+    expect(Date.parse(parsed.exportedAt)).not.toBeNaN()
   })
 })

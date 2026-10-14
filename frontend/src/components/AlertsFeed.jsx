@@ -15,6 +15,7 @@ import { thresholdFor } from '../rules'
 import { severityLabel } from '../severity'
 import { formatDuration, formatPercent } from '../format'
 import { Icon } from './ui'
+import { downloadText, timestampForFilename } from '../download'
 
 const STATUS_LABELS = { active: 'Active', acknowledged: 'Acknowledged', resolved: 'Resolved' }
 const SEVERITY_TONES = { critical: 'critical', high: 'high', warning: 'warning' }
@@ -29,18 +30,6 @@ function formatFired(time) {
 function shortDescription(alert) {
   const breach = alert.predictedBreachMinutes > 0 ? `breach in ~${formatDuration(alert.predictedBreachMinutes)}` : 'threshold breached'
   return `${metricLabel(alert.metric)} ${formatPercent(alert.currentValue)} · ${breach}`
-}
-
-function downloadCsv(text, filename) {
-  const blob = new Blob([text], { type: 'text/csv;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  link.remove()
-  URL.revokeObjectURL(url)
 }
 
 function AlertRow({ alert, status, rules, hasChildren, expanded, onToggle, onSelect, onResolve, onAcknowledge, resolvingId }) {
@@ -233,7 +222,7 @@ export default function AlertsFeed({
             type="button"
             className="btn btn-primary"
             disabled={filtered.length === 0}
-            onClick={() => downloadCsv(alertsToCsv(filtered, acknowledgedIds), `foresight-alerts-${new Date().toISOString().slice(0, 19).replace(/:/g, '')}.csv`)}
+            onClick={() => downloadText(alertsToCsv(filtered, acknowledgedIds), `foresight-alerts-${timestampForFilename()}.csv`, 'text/csv;charset=utf-8')}
           >
             <Icon name="download" /> Export Logs
           </button>
