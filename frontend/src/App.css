@@ -68,13 +68,22 @@ body {
 .nav-item {
   display: flex;
   align-items: center;
+  width: 100%;
   gap: 11px;
   padding: 10px;
+  border: 0;
   border-radius: 6px;
   color: var(--muted);
+  background: none;
+  font: inherit;
   font-size: 13px;
-  cursor: default;
+  text-align: left;
   text-decoration: none;
+  cursor: default;
+}
+
+button.nav-item {
+  cursor: pointer;
 }
 
 .nav-item i {

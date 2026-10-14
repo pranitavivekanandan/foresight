@@ -1,4 +1,4 @@
-export default function Sidebar() {
+export default function Sidebar({ view, onNavigate }) {
   return (
     <aside className="sidebar">
       <div className="logo-row">
@@ -7,14 +7,22 @@ export default function Sidebar() {
       </div>
 
       <nav className="sidebar-nav" aria-label="Main navigation">
-        <div className="nav-item active">
+        <button
+          type="button"
+          className={`nav-item${view === 'dashboard' ? ' active' : ''}`}
+          onClick={() => onNavigate('dashboard')}
+        >
           <i className="ti ti-layout-dashboard" aria-hidden="true"></i>
           <span>Dashboard</span>
-        </div>
-        <div className="nav-item">
+        </button>
+        <button
+          type="button"
+          className={`nav-item${view === 'alerts' ? ' active' : ''}`}
+          onClick={() => onNavigate('alerts')}
+        >
           <i className="ti ti-bell" aria-hidden="true"></i>
           <span>Alerts</span>
-        </div>
+        </button>
         <div className="nav-item">
           <i className="ti ti-adjustments" aria-hidden="true"></i>
           <span>Rules</span>
