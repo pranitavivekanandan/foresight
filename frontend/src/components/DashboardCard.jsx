@@ -1,7 +1,7 @@
 import TrendChart from './TrendChart'
 import { analyzeTrend } from '../trend'
 
-export default function DashboardCard({ containerName, history, prediction, cpuPrediction }) {
+export default function DashboardCard({ containerName, history, prediction, cpuPrediction, hasActiveAlert }) {
   const data = Array.isArray(history?.data) ? history.data : []
   const lastEntry = data[data.length - 1]
   const memoryTrend = analyzeTrend(data)
@@ -25,6 +25,7 @@ export default function DashboardCard({ containerName, history, prediction, cpuP
     <div className="card">
       <div className="card-heading">
         <h2>{containerName}</h2>
+        {hasActiveAlert && <span className="badge critical">Alert active</span>}
       </div>
       <div className="metric-grid">
         <div><span>CPU usage</span><strong>{Number.isFinite(lastEntry.cpuPercent) ? `${lastEntry.cpuPercent}%` : 'Unavailable'}</strong></div>
