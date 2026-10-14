@@ -1,0 +1,9 @@
+{
+  "region": "us-east-1",
+  "prices": {
+    "restartHourlyPrice": 0.0416,
+    "fromHourlyPrice": 0.0416,
+    "toHourlyPrice": 0.0832
+  },
+  "fetchedAt": "2026-10-14T01:17:00.000Z"
+}

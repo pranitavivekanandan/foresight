@@ -1,0 +1,266 @@
+.settings-layout {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.settings-tabs {
+  display: grid;
+  gap: 4px;
+}
+
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-right: 2px solid transparent;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  color: var(--text-2);
+  font-size: 13.5px;
+}
+
+.settings-tab:hover {
+  background: var(--surface-2);
+}
+
+.settings-tab.active {
+  border-right-color: var(--green);
+  background: var(--surface-2);
+  color: var(--green);
+}
+
+.settings-tab.separated {
+  margin-top: 14px;
+  padding-top: 13px;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.settings-content {
+  display: grid;
+  gap: 22px;
+}
+
+.card-title-row h2 {
+  flex-wrap: wrap;
+}
+
+.invite-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  align-items: end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.invite-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.member-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar.small {
+  width: 28px;
+  height: 28px;
+  color: var(--green);
+  background: var(--green-soft);
+  border-color: rgba(62, 224, 127, 0.25);
+  font-size: 10.5px;
+}
+
+.select.compact {
+  padding: 3px 6px;
+  font-size: 12px;
+}
+
+.row-menu-cell {
+  position: relative;
+  width: 48px;
+}
+
+.row-menu {
+  position: absolute;
+  top: 38px;
+  right: 8px;
+  z-index: 5;
+  padding: 4px;
+  background: var(--surface-3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+.row-menu button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--red);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.row-menu button:hover {
+  background: var(--surface-2);
+}
+
+.section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.section-title h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.integrations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.integration-card {
+  display: grid;
+  gap: 12px;
+}
+
+.integration-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.integration-head > div {
+  display: grid;
+  flex: 1;
+}
+
+.integration-logo {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--surface-3);
+  font-size: 20px;
+}
+
+.logo-slack { background: #4a154b; color: #fff; }
+.logo-pagerduty { background: #06ac38; color: #fff; }
+.logo-discord { background: #5865f2; color: #fff; }
+.logo-datadog { background: #632ca6; color: #fff; }
+
+.simulated-note {
+  margin-top: -4px;
+}
+
+.integration-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.integration-actions .icon-button {
+  border: 1px solid var(--border-strong);
+  height: auto;
+}
+
+.add-integration {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 6px;
+  min-height: 220px;
+  border-style: dashed;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.add-integration:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.add-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface-3);
+  font-size: 20px;
+}
+
+.cost-body {
+  display: grid;
+  gap: 14px;
+}
+
+.cost-explainer {
+  line-height: 1.6;
+}
+
+.settings-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.status-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.status-dots .dot {
+  width: 12px;
+  height: 12px;
+}
+
+.latency {
+  margin-left: auto;
+}
+
+@media (max-width: 860px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-tabs {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .settings-tab.separated {
+    margin-top: 0;
+    padding-top: 9px;
+    border-top: 0;
+  }
+}
+
+.latency .mono,
+.latency .muted {
+  text-transform: none;
+  letter-spacing: 0;
+}
