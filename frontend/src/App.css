@@ -411,6 +411,212 @@ body {
   font-weight: 700;
 }
 
+.alerts-feed {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.alerts-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.alerts-feed-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.status-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.status-filter select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  background: var(--card-bg);
+  font-size: 13px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.alerts-table {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--border);
+}
+
+.alert-group {
+  display: grid;
+  gap: 1px;
+}
+
+.alert-row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 120px 90px 90px auto;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--card-bg);
+  cursor: pointer;
+}
+
+.alert-row-child {
+  grid-template-columns: 20px minmax(0, 1fr) 120px 90px 90px auto;
+  padding-left: 40px;
+  background: #101911;
+}
+
+.alert-expand-toggle {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.alert-row-main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.alert-row-main strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.alert-row-main span {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.alert-row-metric,
+.alert-row-time {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.resolve-button {
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  background: #1b2b21;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.resolve-button:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.resolve-button.small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.alert-detail {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.breadcrumb-back {
+  margin-bottom: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.alert-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.alert-detail-header h2 {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 22px;
+}
+
+.alert-explanation-card {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--red);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background: var(--card-bg);
+}
+
+.alert-explanation-card p {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.breach-estimate {
+  color: var(--amber) !important;
+  font-weight: 600;
+}
+
+.cost-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.cost-card {
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+}
+
+.cost-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cost-card-heading h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.cost-value {
+  color: var(--green);
+  font-size: 16px;
+  font-weight: 700;
+}
+
 @media (max-width: 640px) {
   .app-shell {
     display: block;
