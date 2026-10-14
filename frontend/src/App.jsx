@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage'
 import MetricDetailPage from './pages/MetricDetailPage'
 import AlertDetailPage from './pages/AlertDetailPage'
 import AlertsPage from './pages/AlertsPage'
+import SettingsPage from './pages/SettingsPage'
 import './App.css'
 
 // HashRouter so every screen has its own URL and a browser refresh works
@@ -20,6 +21,8 @@ export function AppRoutes() {
         <Route path="services/:containerId" element={<MetricDetailPage />} />
         <Route path="alerts" element={<AlertsPage />} />
         <Route path="alerts/:alertId" element={<AlertDetailPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="settings/:tab" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
