@@ -1,0 +1,22 @@
+{
+  "packageManager": "npm",
+  "testRunner": "jest",
+  "coverageAnalysis": "off",
+  "concurrency": 1,
+  "reporters": ["html", "clear-text", "progress"],
+  "mutate": [
+    "services/dockerStatsService.js:5-18",
+    "services/alertEvaluator.js:18-64",
+    "services/costService.js:28-38"
+  ],
+  "jest": {
+    "config": {
+      "testMatch": ["**/tests/unit/**/*.test.js"]
+    }
+  },
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": 50
+  }
+}
